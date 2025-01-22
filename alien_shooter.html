@@ -9,26 +9,62 @@
             margin: 0;
             overflow: hidden;
             background: black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        #game-container {
+            position: relative;
+            width: 800px;
+            height: 600px;
+        }
+        canvas {
+            display: block;
+            background: black;
+        }
+        #controls {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 10px;
+        }
+        .control-button {
+            width: 80px;
+            height: 80px;
+            background: gray;
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            line-height: 80px;
+            border-radius: 10px;
+            user-select: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .control-button:active {
+            background: darkgray;
         }
     </style>
 </head>
 <body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+    </div>
+    <div id="controls">
+        <div id="left" class="control-button">←</div>
+        <div id="shoot" class="control-button">🔥</div>
+        <div id="right" class="control-button">→</div>
+    </div>
     <script>
-        // Alien Shooter Game
-        // A 2D game where players shoot down aliens.
-        // The game is web-based and compatible with both mobile and desktop.
-
-        const canvas = document.createElement('canvas');
+        const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = 800;
         canvas.height = 600;
-        document.body.appendChild(canvas);
 
-        // Assets and variables
         const player = { x: 400, y: 500, width: 50, height: 50, color: 'blue', speed: 5, bullets: [] };
         const aliens = [];
-        const bullets = [];
-        const keys = {};
+        const keys = { left: false, right: false, shoot: false };
         let score = 0;
         let gameRunning = true;
 
@@ -53,18 +89,30 @@
             ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
         }
 
-        // Event listeners
-        window.addEventListener('keydown', (e) => (keys[e.key] = true));
-        window.addEventListener('keyup', (e) => (keys[e.key] = false));
-        canvas.addEventListener('touchstart', (e) => {
-            player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: 'red', speed: 5 });
+        // Onscreen control events
+        document.getElementById('left').addEventListener('touchstart', () => keys.left = true);
+        document.getElementById('left').addEventListener('touchend', () => keys.left = false);
+        document.getElementById('right').addEventListener('touchstart', () => keys.right = true);
+        document.getElementById('right').addEventListener('touchend', () => keys.right = false);
+        document.getElementById('shoot').addEventListener('touchstart', () => keys.shoot = true);
+        document.getElementById('shoot').addEventListener('touchend', () => keys.shoot = false);
+
+        // Keyboard events
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') keys.left = true;
+            if (e.key === 'ArrowRight') keys.right = true;
+            if (e.key === ' ') keys.shoot = true;
+        });
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft') keys.left = false;
+            if (e.key === 'ArrowRight') keys.right = false;
+            if (e.key === ' ') keys.shoot = false;
         });
 
-        // Main game functions
         function update() {
-            if (keys['ArrowLeft'] && player.x > 0) player.x -= player.speed;
-            if (keys['ArrowRight'] && player.x < canvas.width - player.width) player.x += player.speed;
-            if (keys[' '] || keys['Space']) {
+            if (keys.left && player.x > 0) player.x -= player.speed;
+            if (keys.right && player.x < canvas.width - player.width) player.x += player.speed;
+            if (keys.shoot) {
                 if (!player.shooting) {
                     player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: 'red', speed: 5 });
                     player.shooting = true;
@@ -73,18 +121,15 @@
                 player.shooting = false;
             }
 
-            // Update bullets
             player.bullets.forEach((bullet, index) => {
                 bullet.y -= bullet.speed;
                 if (bullet.y + bullet.height < 0) player.bullets.splice(index, 1);
             });
 
-            // Update aliens
             aliens.forEach((alien, index) => {
                 alien.y += alien.speed;
                 if (alien.y > canvas.height) aliens.splice(index, 1);
 
-                // Check collision with bullets
                 player.bullets.forEach((bullet, bIndex) => {
                     if (
                         bullet.x < alien.x + alien.width &&
@@ -99,23 +144,16 @@
                 });
             });
 
-            // Spawn aliens
             if (Math.random() < 0.02) createAlien();
         }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Draw player
             drawRect(player);
-
-            // Draw bullets
             player.bullets.forEach((bullet) => drawRect(bullet));
-
-            // Draw aliens
             aliens.forEach((alien) => drawRect(alien));
 
-            // Draw score
             ctx.fillStyle = 'white';
             ctx.font = '20px Arial';
             ctx.fillText(`Score: ${score}`, 10, 20);
@@ -130,12 +168,7 @@
             requestAnimationFrame(gameLoop);
         }
 
-        // Start the game
-        function startGame() {
-            gameLoop();
-        }
-
-        startGame();
+        gameLoop();
     </script>
 </body>
 </html>
