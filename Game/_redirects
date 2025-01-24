@@ -1,5 +1,0 @@
-# Ensure the game.js file is served correctly
-/game.js    /game.js   200
-
-# Redirect all requests to the main game HTML page
-/*    /alien_shooter.html   200
