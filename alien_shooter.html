@@ -12,8 +12,9 @@
       position: relative;
     }
 
+    /* Buttons should stay on top in fullscreen */
     button {
-      position: absolute;
+      position: fixed;
       padding: 10px 20px;
       background: #333;
       color: #fff;
@@ -41,6 +42,13 @@
     #shoot {
       bottom: 10px;
       left: 10px;
+    }
+
+    /* Ensures canvas takes full screen when fullscreen */
+    canvas {
+      display: block;
+      background: black;
+      position: absolute;
     }
   </style>
 </head>
