@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<<script src="game.js"></script>
+>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alien Shooter Game</title>
@@ -11,6 +12,7 @@
       background: black;
       position: relative;
     }
+
     button {
       position: absolute;
       padding: 10px 20px;
@@ -21,18 +23,22 @@
       cursor: pointer;
       z-index: 1000;
     }
+
     #fullscreen {
       bottom: 10px;
       right: 10px;
     }
+
     #left {
       bottom: 80px;
       left: 10px;
     }
+
     #right {
       bottom: 80px;
       left: 100px;
     }
+
     #shoot {
       bottom: 10px;
       left: 10px;
@@ -82,6 +88,31 @@
     shootButton.textContent = 'Shoot';
     document.body.appendChild(shootButton);
 
+    // Ensure buttons are visible in fullscreen mode
+    const positionButtons = () => {
+      const scale = window.innerWidth / canvas.width;
+      const offsetX = (window.innerWidth - canvas.width * scale) / 2;
+
+      fullscreenButton.style.transform = `scale(${scale})`;
+      fullscreenButton.style.right = `${offsetX}px`;
+      fullscreenButton.style.bottom = `${10 * scale}px`;
+
+      leftButton.style.transform = `scale(${scale})`;
+      leftButton.style.left = `${10 * scale}px`;
+      leftButton.style.bottom = `${80 * scale}px`;
+
+      rightButton.style.transform = `scale(${scale})`;
+      rightButton.style.left = `${100 * scale}px`;
+      rightButton.style.bottom = `${80 * scale}px`;
+
+      shootButton.style.transform = `scale(${scale})`;
+      shootButton.style.left = `${10 * scale}px`;
+      shootButton.style.bottom = `${10 * scale}px`;
+    };
+
+    window.addEventListener('resize', positionButtons);
+    positionButtons();
+
     // Game Variables
     const player = { x: 375, y: 500, width: 50, height: 50, color: 'blue', speed: 5, bullets: [] };
     const aliens = [];
@@ -114,10 +145,11 @@
     window.addEventListener('keyup', (e) => (keys[e.key] = false));
 
     // Handle mobile buttons
-    leftButton.addEventListener('mousedown', () => (keys['ArrowLeft'] = true));
-    leftButton.addEventListener('mouseup', () => (keys['ArrowLeft'] = false));
-    rightButton.addEventListener('mousedown', () => (keys['ArrowRight'] = true));
-    rightButton.addEventListener('mouseup', () => (keys['ArrowRight'] = false));
+    let leftPressed = false, rightPressed = false;
+    leftButton.addEventListener('mousedown', () => (leftPressed = true));
+    leftButton.addEventListener('mouseup', () => (leftPressed = false));
+    rightButton.addEventListener('mousedown', () => (rightPressed = true));
+    rightButton.addEventListener('mouseup', () => (rightPressed = false));
     shootButton.addEventListener('click', () => {
       player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: 'red', speed: 5 });
     });
@@ -125,8 +157,8 @@
     // Main game functions
     function update() {
       // Player movement
-      if (keys['ArrowLeft'] && player.x > 0) player.x -= player.speed;
-      if (keys['ArrowRight'] && player.x < canvas.width - player.width) player.x += player.speed;
+      if ((keys['ArrowLeft'] || leftPressed) && player.x > 0) player.x -= player.speed;
+      if ((keys['ArrowRight'] || rightPressed) && player.x < canvas.width - player.width) player.x += player.speed;
 
       // Update bullets
       player.bullets.forEach((bullet, index) => {
