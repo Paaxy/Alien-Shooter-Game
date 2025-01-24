@@ -8,9 +8,34 @@ let keys = {};
 let shooting = false;
 let lives = 3;
 
-// Setup event listeners
+// Player object
+let player = {
+  x: canvas.width / 2,
+  y: canvas.height - 60,
+  width: 50,
+  height: 50,
+  speed: 5,
+};
+
+// Alien object
+let aliens = [];
+const alienCount = 5;
+
+// Create aliens
+function createAliens() {
+  for (let i = 0; i < alienCount; i++) {
+    aliens.push({
+      x: Math.random() * (canvas.width - 50),
+      y: Math.random() * (canvas.height / 2),
+      width: 50,
+      height: 50,
+      speed: Math.random() * 2 + 1,
+    });
+  }
+}
+
+// Setup event listeners for keyboard controls
 function setupControls() {
-  // Keyboard controls
   window.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowUp') keys.up = true;
     if (e.key === 'ArrowDown') keys.down = true;
@@ -59,25 +84,47 @@ function setupMobileControls() {
   });
 }
 
+// Update player position
+function updatePlayer() {
+  if (keys.up && player.y > 0) player.y -= player.speed;
+  if (keys.down && player.y < canvas.height - player.height) player.y += player.speed;
+  if (keys.left && player.x > 0) player.x -= player.speed;
+  if (keys.right && player.x < canvas.width - player.width) player.x += player.speed;
+}
+
+// Update alien positions
+function updateAliens() {
+  aliens.forEach(alien => {
+    alien.y += alien.speed;
+    if (alien.y > canvas.height) {
+      alien.y = 0; // Reset to top
+      alien.x = Math.random() * (canvas.width - alien.width); // Random x position
+    }
+  });
+}
+
 // Game loop
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-  // Game logic here
-  if (keys.up) {
-    // Move up
-  }
-  if (keys.down) {
-    // Move down
-  }
-  if (keys.left) {
-    // Move left
-  }
-  if (keys.right) {
-    // Move right
-  }
+  // Update player position
+  updatePlayer();
+  updateAliens();
+
+  // Draw player
+  ctx.fillStyle = 'blue'; // Player color
+  ctx.fillRect(player.x, player.y, player.width, player.height);
+
+  // Draw aliens
+  ctx.fillStyle = 'red'; // Alien color
+  aliens.forEach(alien => {
+    ctx.fillRect(alien.x, alien.y, alien.width, alien.height);
+  });
+
+  // Handle shooting logic (placeholder)
   if (shooting) {
-    // Handle shooting
+    // Implement shooting logic here
+    console.log('Shooting!');
   }
 
   // Update lives display
@@ -88,6 +135,7 @@ function gameLoop() {
 
 // Initialize the game
 function init() {
+  createAliens();
   setupControls();
   setupMobileControls();
   gameLoop();
