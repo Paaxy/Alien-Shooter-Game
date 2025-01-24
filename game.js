@@ -3,19 +3,12 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const player = { x: canvas.width / 2, y: canvas.height - 50, width: 50, height: 50, speed: 5 };
+const player = { x: canvas.width / 2, y: canvas.height - 50, width: 50, height: 50, speed: 5, lives: 3 };
 const bullets = [];
+const alienBullets = [];
 const aliens = [];
 let shooting = false;
-
 let keys = { up: false, down: false, left: false, right: false };
-
-// Create aliens
-function createAliens() {
-  for (let i = 0; i < 5; i++) {
-    aliens.push({ x: Math.random() * canvas.width, y: Math.random() * 100, width: 50, height: 50 });
-  }
-}
 
 // Player movement
 function movePlayer() {
@@ -34,14 +27,54 @@ function moveBullets() {
       i--;
     }
   }
+  
+  for (let i = 0; i < alienBullets.length; i++) {
+    alienBullets[i].y += 5;
+    if (alienBullets[i].y > canvas.height) {
+      alienBullets.splice(i, 1);
+      i--;
+    }
+  }
+}
+
+// Alien creation
+function createAliens() {
+  setInterval(() => {
+    const alien = { 
+      x: Math.random() * canvas.width, 
+      y: 0, 
+      width: 50, 
+      height: 50, 
+      speed: 1 + Math.random() * 3 
+    };
+    aliens.push(alien);
+  }, 1000);
+}
+
+// Alien movement
+function moveAliens() {
+  aliens.forEach(alien => {
+    if (alien.y < canvas.height - alien.height) {
+      alien.y += alien.speed;
+    }
+    // Move aliens towards player
+    if (alien.x < player.x) alien.x += alien.speed;
+    if (alien.x > player.x) alien.x -= alien.speed;
+  });
 }
 
 // Alien shooting
 function shootAliens() {
-  aliens.forEach((alien, index) => {
+  aliens.forEach(alien => {
     if (Math.random() < 0.01) {
-      const bullet = { x: alien.x + alien.width / 2, y: alien.y + alien.height, width: 5, height: 15 };
-      bullets.push(bullet);
+      const bullet = { 
+        x: alien.x + alien.width / 2, 
+        y: alien.y + alien.height, 
+        width: 5, 
+        height: 15, 
+        speed: 3
+      };
+      alienBullets.push(bullet);
     }
   });
 }
@@ -61,33 +94,61 @@ function checkBulletCollision() {
       }
     }
   }
+
+  for (let i = 0; i < alienBullets.length; i++) {
+    if (alienBullets[i].x < player.x + player.width &&
+      alienBullets[i].x + alienBullets[i].width > player.x &&
+      alienBullets[i].y < player.y + player.height &&
+      alienBullets[i].y + alienBullets[i].height > player.y) {
+        player.lives--;
+        alienBullets.splice(i, 1);
+        if (player.lives <= 0) {
+          alert("Game Over!");
+          // Reset game (for now, we just reload the page)
+          location.reload();
+        }
+        break;
+    }
+  }
 }
 
 // Draw everything
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+
   // Draw player
   ctx.fillStyle = 'white';
   ctx.fillRect(player.x, player.y, player.width, player.height);
-  
+
   // Draw bullets
   bullets.forEach(bullet => {
     ctx.fillStyle = 'yellow';
     ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
   });
-  
+
+  // Draw alien bullets
+  alienBullets.forEach(bullet => {
+    ctx.fillStyle = 'red';
+    ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+  });
+
   // Draw aliens
   aliens.forEach(alien => {
     ctx.fillStyle = 'green';
     ctx.fillRect(alien.x, alien.y, alien.width, alien.height);
   });
+
+  // Draw player lives
+  ctx.fillStyle = 'white';
+  ctx.font = '20px Arial';
+  ctx.fillText(`Lives: ${player.lives}`, 20, 30);
 }
 
 // Main game loop
 function gameLoop() {
   movePlayer();
   moveBullets();
+  moveAliens();
   shootAliens();
   checkBulletCollision();
   draw();
