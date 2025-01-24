@@ -166,11 +166,11 @@ document.getElementById('pauseBtn').addEventListener('click', () => {
 // Mobile controls
 function setupMobileControls() {
   const mobileButtons = {
-    up: document.getElementById('↑'),
-    down: document.getElementById('↓'),
-    left: document.getElementById('←'),
-    right: document.getElementById('→'),
-    shoot: document.getElementById('Shoot'),
+    up: document.getElementById('up'),
+    down: document.getElementById('down'),
+    left: document.getElementById('left'),
+    right: document.getElementById('right'),
+    shoot: document.getElementById('shootBtn'),
   };
 
   Object.entries(mobileButtons).forEach(([key, button]) => {
