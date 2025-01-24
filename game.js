@@ -5,7 +5,6 @@ canvas.height = window.innerHeight;
 
 const player = { x: canvas.width / 2, y: canvas.height - 50, width: 50, height: 50, speed: 5, lives: 3 };
 const bullets = [];
-const alienBullets = [];
 const aliens = [];
 let shooting = false;
 let keys = { up: false, down: false, left: false, right: false };
@@ -21,76 +20,67 @@ function movePlayer() {
 
 // Bullet movement
 function moveBullets() {
-  for (let i = 0; i < bullets.length; i++) {
-    bullets[i].y -= 10;
-    if (bullets[i].y < 0) {
-      bullets.splice(i, 1);
-      i--;
-    }
-  }
+  bullets.forEach((bullet, index) => {
+    bullet.y -= bullet.speed;
+    if (bullet.y < 0) bullets.splice(index, 1);
+  });
 }
 
-// Alien creation
+// Spawn aliens
 function createAliens() {
   setInterval(() => {
     if (!isPaused) {
-      const alien = { 
-        x: Math.random() * canvas.width, 
-        y: 0, 
-        width: 50, 
-        height: 50, 
-        speed: 1 + Math.random() * 3 
+      const alien = {
+        x: Math.random() * (canvas.width - 50),
+        y: -50,
+        width: 50,
+        height: 50,
+        speed: 2 + Math.random() * 2,
       };
       aliens.push(alien);
     }
   }, 1000);
 }
 
-// Alien movement
+// Move aliens
 function moveAliens() {
-  if (!isPaused) {
-    aliens.forEach(alien => {
-      if (alien.y < canvas.height - alien.height) {
-        alien.y += alien.speed;
-      }
-      if (alien.x < player.x) alien.x += alien.speed;
-      if (alien.x > player.x) alien.x -= alien.speed;
+  aliens.forEach((alien, index) => {
+    alien.y += alien.speed;
+    if (alien.y > canvas.height) aliens.splice(index, 1);
+  });
+}
+
+// Shooting bullets
+function shoot() {
+  if (shooting && bullets.length < 3) {
+    bullets.push({
+      x: player.x + player.width / 2 - 2.5,
+      y: player.y,
+      width: 5,
+      height: 15,
+      speed: 10,
     });
   }
 }
 
-// Shooting functionality
-function shoot() {
-  if (shooting && bullets.length < 3) {  // Limit to 3 bullets on screen at once
-    const bullet = { 
-      x: player.x + player.width / 2 - 2.5, 
-      y: player.y - 10, 
-      width: 5, 
-      height: 15, 
-      speed: 10
-    };
-    bullets.push(bullet);
-  }
-}
-
-// Handle bullet collision and alien removal
-function checkBulletCollision() {
-  for (let i = 0; i < bullets.length; i++) {
-    for (let j = 0; j < aliens.length; j++) {
-      if (bullets[i].x < aliens[j].x + aliens[j].width &&
-        bullets[i].x + bullets[i].width > aliens[j].x &&
-        bullets[i].y < aliens[j].y + aliens[j].height &&
-        bullets[i].y + bullets[i].height > aliens[j].y) {
-        aliens.splice(j, 1);
-        bullets.splice(i, 1);
-        i--;
-        break;
+// Check collision
+function checkCollision() {
+  bullets.forEach((bullet, bIndex) => {
+    aliens.forEach((alien, aIndex) => {
+      if (
+        bullet.x < alien.x + alien.width &&
+        bullet.x + bullet.width > alien.x &&
+        bullet.y < alien.y + alien.height &&
+        bullet.y + bullet.height > alien.y
+      ) {
+        aliens.splice(aIndex, 1);
+        bullets.splice(bIndex, 1);
       }
-    }
-  }
+    });
+  });
 }
 
-// Draw everything
+// Draw game
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -99,26 +89,26 @@ function draw() {
   ctx.fillRect(player.x, player.y, player.width, player.height);
 
   // Draw bullets
-  bullets.forEach(bullet => {
+  bullets.forEach((bullet) => {
     ctx.fillStyle = 'yellow';
     ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
   });
 
   // Draw aliens
-  aliens.forEach(alien => {
+  aliens.forEach((alien) => {
     ctx.fillStyle = 'green';
     ctx.fillRect(alien.x, alien.y, alien.width, alien.height);
   });
 
-  // Draw lives
+  // Update lives
   document.getElementById('livesBar').textContent = `Lives: ${player.lives}`;
 }
 
 // Fullscreen functionality
 document.getElementById('fullscreenBtn').addEventListener('click', () => {
   if (!document.fullscreenElement) {
-    canvas.requestFullscreen().catch(err => {
-      console.error(`Error attempting to enable fullscreen mode: ${err.message}`);
+    canvas.requestFullscreen().catch((err) => {
+      console.error(`Error attempting fullscreen: ${err.message}`);
     });
   } else {
     document.exitFullscreen();
@@ -130,36 +120,33 @@ document.getElementById('pauseBtn').addEventListener('click', () => {
   isPaused = !isPaused;
 });
 
-// Mobile button controls
+// Mobile controls
 function setupMobileControls() {
-  const upButton = document.getElementById('up');
-  const downButton = document.getElementById('down');
-  const leftButton = document.getElementById('left');
-  const rightButton = document.getElementById('right');
-  const shootButton = document.getElementById('shootBtn');
+  const mobileButtons = {
+    up: document.getElementById('up'),
+    down: document.getElementById('down'),
+    left: document.getElementById('left'),
+    right: document.getElementById('right'),
+    shoot: document.getElementById('shootBtn'),
+  };
 
-  function handleButtonPress(key) {
-    keys[key] = true;
-  }
+  Object.entries(mobileButtons).forEach(([key, button]) => {
+    button.addEventListener('touchstart', () => {
+      if (key === 'shoot') {
+        shooting = true;
+      } else {
+        keys[key] = true;
+      }
+    });
 
-  function handleButtonRelease(key) {
-    keys[key] = false;
-  }
-
-  upButton.addEventListener('touchstart', () => handleButtonPress('up'));
-  upButton.addEventListener('touchend', () => handleButtonRelease('up'));
-
-  downButton.addEventListener('touchstart', () => handleButtonPress('down'));
-  downButton.addEventListener('touchend', () => handleButtonRelease('down'));
-
-  leftButton.addEventListener('touchstart', () => handleButtonPress('left'));
-  leftButton.addEventListener('touchend', () => handleButtonRelease('left'));
-
-  rightButton.addEventListener('touchstart', () => handleButtonPress('right'));
-  rightButton.addEventListener('touchend', () => handleButtonRelease('right'));
-
-  shootButton.addEventListener('touchstart', () => (shooting = true));
-  shootButton.addEventListener('touchend', () => (shooting = false));
+    button.addEventListener('touchend', () => {
+      if (key === 'shoot') {
+        shooting = false;
+      } else {
+        keys[key] = false;
+      }
+    });
+  });
 }
 
 // Keyboard controls
@@ -178,6 +165,19 @@ window.addEventListener('keyup', (e) => {
   if (e.key === 'ArrowRight') keys.right = false;
   if (e.key === ' ') shooting = false;
 });
+
+// Main game loop
+function gameLoop() {
+  if (!isPaused) {
+    movePlayer();
+    moveBullets();
+    moveAliens();
+    shoot();
+    checkCollision();
+    draw();
+  }
+  requestAnimationFrame(gameLoop);
+}
 
 // Initialize game
 setupMobileControls();
