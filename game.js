@@ -9,6 +9,8 @@ const alienBullets = [];
 const aliens = [];
 let shooting = false;
 let keys = { up: false, down: false, left: false, right: false };
+let isPaused = false;
+let gameInterval;
 
 // Player movement
 function movePlayer() {
@@ -40,43 +42,49 @@ function moveBullets() {
 // Alien creation
 function createAliens() {
   setInterval(() => {
-    const alien = { 
-      x: Math.random() * canvas.width, 
-      y: 0, 
-      width: 50, 
-      height: 50, 
-      speed: 1 + Math.random() * 3 
-    };
-    aliens.push(alien);
+    if (!isPaused) {
+      const alien = { 
+        x: Math.random() * canvas.width, 
+        y: 0, 
+        width: 50, 
+        height: 50, 
+        speed: 1 + Math.random() * 3 
+      };
+      aliens.push(alien);
+    }
   }, 1000);
 }
 
 // Alien movement
 function moveAliens() {
-  aliens.forEach(alien => {
-    if (alien.y < canvas.height - alien.height) {
-      alien.y += alien.speed;
-    }
-    // Move aliens towards player
-    if (alien.x < player.x) alien.x += alien.speed;
-    if (alien.x > player.x) alien.x -= alien.speed;
-  });
+  if (!isPaused) {
+    aliens.forEach(alien => {
+      if (alien.y < canvas.height - alien.height) {
+        alien.y += alien.speed;
+      }
+      // Move aliens towards player
+      if (alien.x < player.x) alien.x += alien.speed;
+      if (alien.x > player.x) alien.x -= alien.speed;
+    });
+  }
 }
 
 // Alien shooting
 function shootAliens() {
-  aliens.forEach(alien => {
-    if (Math.random() < 0.01) {
-      const bullet = { 
-        x: alien.x + alien.width / 2, 
-        y: alien.y + alien.height, 
-        width: 5, 
-        height: 15, 
-        speed: 3
-      };
-      alienBullets.push(bullet);
-    }
-  });
+  if (!isPaused) {
+    aliens.forEach(alien => {
+      if (Math.random() < 0.01) {
+        const bullet = { 
+          x: alien.x + alien.width / 2, 
+          y: alien.y + alien.height, 
+          width: 5, 
+          height: 15, 
+          speed: 3
+        };
+        alienBullets.push(bullet);
+      }
+    });
+  }
 }
 
 // Bullet collision
@@ -158,13 +166,15 @@ function draw() {
 
 // Main game loop
 function gameLoop() {
-  movePlayer();
-  moveBullets();
-  moveAliens();
-  shootAliens();
-  shoot();  // Call shoot to ensure the player can shoot
-  checkBulletCollision();
-  draw();
+  if (!isPaused) {
+    movePlayer();
+    moveBullets();
+    moveAliens();
+    shootAliens();
+    shoot();  // Call shoot to ensure the player can shoot
+    checkBulletCollision();
+    draw();
+  }
   requestAnimationFrame(gameLoop);
 }
 
@@ -188,24 +198,7 @@ window.addEventListener('keyup', (e) => {
   if (e.key === ' ' || e.key === 'Enter') shooting = false;
 });
 
-// Mobile controls
-document.getElementById('up').addEventListener('touchstart', () => { keys.up = true; });
-document.getElementById('down').addEventListener('touchstart', () => { keys.down = true; });
-document.getElementById('left').addEventListener('touchstart', () => { keys.left = true; });
-document.getElementById('right').addEventListener('touchstart', () => { keys.right = true; });
-document.getElementById('shootBtn').addEventListener('touchstart', () => { shooting = true; });
-
-document.getElementById('up').addEventListener('touchend', () => { keys.up = false; });
-document.getElementById('down').addEventListener('touchend', () => { keys.down = false; });
-document.getElementById('left').addEventListener('touchend', () => { keys.left = false; });
-document.getElementById('right').addEventListener('touchend', () => { keys.right = false; });
-document.getElementById('shootBtn').addEventListener('touchend', () => { shooting = false; });
-
-// Fullscreen toggle
-document.getElementById('fullscreenBtn').addEventListener('click', () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-  } else {
-    if (document.exitFullscreen) document.exitFullscreen();
-  }
+// Pause functionality
+document.getElementById('pauseBtn').addEventListener('click', () => {
+  isPaused = !isPaused;
 });
