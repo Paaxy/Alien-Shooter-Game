@@ -174,7 +174,8 @@ function setupMobileControls() {
   };
 
   Object.entries(mobileButtons).forEach(([key, button]) => {
-    button.addEventListener('touchstart', () => {
+    button.addEventListener('touchstart', (e) => {
+      e.preventDefault(); // Prevent touch scrolling
       if (key === 'shoot') {
         shooting = true;
       } else {
@@ -182,7 +183,8 @@ function setupMobileControls() {
       }
     });
 
-    button.addEventListener('touchend', () => {
+    button.addEventListener('touchend', (e) => {
+      e.preventDefault(); // Prevent touch scrolling
       if (key === 'shoot') {
         shooting = false;
       } else {
