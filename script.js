@@ -169,6 +169,44 @@ function updateAlienBullets() {
     });
 }
 
+// Check for collisions
+function checkCollisions() {
+    // Check for player bullet collisions with aliens
+    playerBullets.forEach((bullet, bulletIndex) => {
+        aliens.forEach((alien, alienIndex) => {
+            if (
+                bullet.x < alien.x + alien.width &&
+                bullet.x + bullet.width > alien.x &&
+                bullet.y < alien.y + alien.height &&
+                bullet.y + bullet.height > alien.y
+            ) {
+                // Remove the bullet and the alien on collision
+                playerBullets.splice(bulletIndex, 1);
+                aliens.splice(alienIndex, 1);
+            }
+        });
+    });
+
+    // Check for alien bullet collisions with player
+    alienBullets.forEach((bullet, bulletIndex) => {
+        if (
+            bullet.x < player.x + player.width &&
+            bullet.x + bullet.width > player.x &&
+            bullet.y < player.y + player.height &&
+            bullet.y + bullet.height > player.y
+        ) {
+            // Remove the bullet and decrease lives
+            alienBullets.splice(bulletIndex, 1);
+            lives -= 1;
+            if (lives <= 0) {
+                alert('Game Over!');
+                // Reset the game or reload the page
+                location.reload();
+            }
+        }
+    });
+}
+
 // Toggle pause
 function togglePause() {
     paused = !paused;
@@ -203,6 +241,7 @@ function gameLoop() {
     updatePlayerBullets();
     updateAliens();
     updateAlienBullets();
+    checkCollisions();
 
     // Draw player
     ctx.fillStyle = 'blue'; // Player color
