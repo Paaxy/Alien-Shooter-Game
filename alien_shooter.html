@@ -88,7 +88,7 @@
     shootButton.textContent = 'Shoot';
     document.body.appendChild(shootButton);
 
-    // Function to position buttons correctly
+    // Reposition buttons when resizing or toggling fullscreen
     const positionButtons = () => {
       const scale = window.innerWidth / canvas.width;
       const offsetX = (window.innerWidth - canvas.width * scale) / 2;
@@ -111,7 +111,8 @@
     };
 
     window.addEventListener('resize', positionButtons);
-    positionButtons();
+    window.addEventListener('fullscreenchange', positionButtons);
+    positionButtons(); // Initial position of buttons
 
     // Game Variables
     const player = { x: 375, y: 500, width: 50, height: 50, color: 'blue', speed: 5, bullets: [] };
