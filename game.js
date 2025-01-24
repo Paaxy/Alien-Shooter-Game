@@ -5,6 +5,7 @@ canvas.height = window.innerHeight;
 
 const player = { x: canvas.width / 2, y: canvas.height - 50, width: 50, height: 50, speed: 5, lives: 3 };
 const bullets = [];
+const alienBullets = [];
 const aliens = [];
 let shooting = false;
 let keys = { up: false, down: false, left: false, right: false };
@@ -24,6 +25,11 @@ function moveBullets() {
     bullet.y -= bullet.speed;
     if (bullet.y < 0) bullets.splice(index, 1);
   });
+
+  alienBullets.forEach((bullet, index) => {
+    bullet.y += bullet.speed;
+    if (bullet.y > canvas.height) alienBullets.splice(index, 1);
+  });
 }
 
 // Spawn aliens
@@ -36,10 +42,26 @@ function createAliens() {
         width: 50,
         height: 50,
         speed: 2 + Math.random() * 2,
+        shootCooldown: Math.random() * 2000 + 1000, // Random shoot cooldown
       };
       aliens.push(alien);
     }
   }, 1000);
+}
+
+// Alien shooting bullets
+function alienShoot() {
+  aliens.forEach((alien) => {
+    if (Math.random() < 0.01) {
+      alienBullets.push({
+        x: alien.x + alien.width / 2 - 2.5,
+        y: alien.y + alien.height,
+        width: 5,
+        height: 15,
+        speed: 5,
+      });
+    }
+  });
 }
 
 // Move aliens
@@ -78,6 +100,22 @@ function checkCollision() {
       }
     });
   });
+
+  alienBullets.forEach((bullet, bIndex) => {
+    if (
+      bullet.x < player.x + player.width &&
+      bullet.x + bullet.width > player.x &&
+      bullet.y < player.y + player.height &&
+      bullet.y + bullet.height > player.y
+    ) {
+      player.lives--;
+      alienBullets.splice(bIndex, 1);
+      if (player.lives <= 0) {
+        alert('Game Over!');
+        window.location.reload();
+      }
+    }
+  });
 }
 
 // Draw game
@@ -94,6 +132,12 @@ function draw() {
     ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
   });
 
+  // Draw alien bullets
+  alienBullets.forEach((bullet) => {
+    ctx.fillStyle = 'red';
+    ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+  });
+
   // Draw aliens
   aliens.forEach((alien) => {
     ctx.fillStyle = 'green';
@@ -107,7 +151,7 @@ function draw() {
 // Fullscreen functionality
 document.getElementById('fullscreenBtn').addEventListener('click', () => {
   if (!document.fullscreenElement) {
-    canvas.requestFullscreen().catch((err) => {
+    document.getElementById('game-container').requestFullscreen().catch((err) => {
       console.error(`Error attempting fullscreen: ${err.message}`);
     });
   } else {
@@ -173,6 +217,7 @@ function gameLoop() {
     moveBullets();
     moveAliens();
     shoot();
+    alienShoot();
     checkCollision();
     draw();
   }
