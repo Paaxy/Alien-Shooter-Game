@@ -73,6 +73,7 @@
         <button id="left">Left</button>
         <button id="right">Right</button>
         <button id="shootBtn">Shoot</button>
+        <button id="pauseBtn">Pause</button>
     </div>
     <script>
         // Game variables
@@ -84,6 +85,7 @@
         let keys = {};
         let shooting = false;
         let lives = 3;
+        let paused = false;
 
         // Player object
         let player = {
@@ -143,6 +145,7 @@
                 left: document.getElementById('left'),
                 right: document.getElementById('right'),
                 shoot: document.getElementById('shootBtn'),
+                pause: document.getElementById('pauseBtn'),
             };
 
             Object.entries(mobileButtons).forEach(([key, button]) => {
@@ -150,6 +153,8 @@
                     e.preventDefault(); // Prevent touch scrolling
                     if (key === 'shoot') {
                         shooting = true;
+                    } else if (key === 'pause') {
+                        togglePause();
                     } else {
                         keys[key] = true;
                     }
@@ -188,7 +193,7 @@
         // Update bullets
         function updateBullets() {
             bullets.forEach((bullet, index) => {
-                bullet.y -= bullet.speed;
+                bullet.y -= bullet.speed; // Bullets move upwards
                 // Remove bullet if it goes off-screen
                 if (bullet.y < 0) {
                     bullets.splice(index, 1);
@@ -236,8 +241,22 @@
             });
         }
 
+        // Toggle pause
+        function togglePause() {
+            paused = !paused;
+            if (paused) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'white';
+                ctx.font = '40px Arial';
+                ctx.fillText('Paused', canvas.width / 2 - 80, canvas.height / 2);
+            }
+        }
+
         // Game loop
         function gameLoop() {
+            if (paused) return; // Stop the game loop if paused
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             // Update player and bullets
