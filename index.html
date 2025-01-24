@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alien Shooter Game</title>
-    <link rel="stylesheet" href="style.css"> <!-- Linking the CSS file -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alien Shooter</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="game-container">
     <canvas id="gameCanvas"></canvas>
     <div id="livesBar">Lives: 3</div>
-    <div id="controls">
-        <button id="up">Up</button>
-        <button id="down">Down</button>
-        <button id="left">Left</button>
-        <button id="right">Right</button>
-        <button id="shootBtn">Shoot</button>
-        <button id="pauseBtn">Pause</button>
-        <button id="fullscreenBtn">Fullscreen</button>
+    <div class="controls">
+      <button id="pauseBtn">Pause</button>
+      <button id="fullscreenBtn">Fullscreen</button>
     </div>
-    <script src="script.js"></script> <!-- Linking the JS file -->
+    <div class="mobile-controls">
+      <button id="up">↑</button>
+      <button id="down">↓</button>
+      <button id="left">←</button>
+      <button id="right">→</button>
+      <button id="shootBtn">Shoot</button>
+    </div>
+  </div>
+  <script src="game.js"></script>
 </body>
 </html>
