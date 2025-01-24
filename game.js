@@ -1,20 +1,74 @@
-// Alien Shooter Game
-// A 2D game where players shoot down aliens. 
-// The game is web-based and compatible with both mobile and desktop.
-
+// Create the canvas for the game
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = 800;
 canvas.height = 600;
 document.body.appendChild(canvas);
 
-// Assets and variables
-const player = { x: 400, y: 500, width: 50, height: 50, color: 'blue', speed: 5, bullets: [] };
+// Fullscreen functionality
+const toggleFullscreen = () => {
+  if (!document.fullscreenElement) {
+    canvas.requestFullscreen().catch(err => {
+      console.error(`Failed to enable fullscreen: ${err.message}`);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+};
+
+// Create fullscreen button
+const fullscreenButton = document.createElement('button');
+fullscreenButton.id = 'fullscreen';
+fullscreenButton.textContent = 'Fullscreen';
+document.body.appendChild(fullscreenButton);
+fullscreenButton.addEventListener('click', toggleFullscreen);
+
+// Create movement buttons
+const leftButton = document.createElement('button');
+leftButton.id = 'left';
+leftButton.textContent = '←';
+document.body.appendChild(leftButton);
+
+const rightButton = document.createElement('button');
+rightButton.id = 'right';
+rightButton.textContent = '→';
+document.body.appendChild(rightButton);
+
+const shootButton = document.createElement('button');
+shootButton.id = 'shoot';
+shootButton.textContent = 'Shoot';
+document.body.appendChild(shootButton);
+
+// Ensure buttons are visible in fullscreen mode
+const positionButtons = () => {
+  const scale = window.innerWidth / canvas.width;
+  const offsetX = (window.innerWidth - canvas.width * scale) / 2;
+
+  fullscreenButton.style.transform = `scale(${scale})`;
+  fullscreenButton.style.right = `${offsetX}px`;
+  fullscreenButton.style.bottom = `${10 * scale}px`;
+
+  leftButton.style.transform = `scale(${scale})`;
+  leftButton.style.left = `${10 * scale}px`;
+  leftButton.style.bottom = `${80 * scale}px`;
+
+  rightButton.style.transform = `scale(${scale})`;
+  rightButton.style.left = `${100 * scale}px`;
+  rightButton.style.bottom = `${80 * scale}px`;
+
+  shootButton.style.transform = `scale(${scale})`;
+  shootButton.style.left = `${10 * scale}px`;
+  shootButton.style.bottom = `${10 * scale}px`;
+};
+
+window.addEventListener('resize', positionButtons);
+positionButtons();
+
+// Game Variables
+const player = { x: 375, y: 500, width: 50, height: 50, color: 'blue', speed: 5, bullets: [] };
 const aliens = [];
-const bullets = [];
 const keys = {};
 let score = 0;
-let gameRunning = true;
 
 // Utility functions
 function random(min, max) {
@@ -37,25 +91,25 @@ function drawRect(obj) {
   ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
 }
 
-// Event listeners
+// Handle keyboard input
 window.addEventListener('keydown', (e) => (keys[e.key] = true));
 window.addEventListener('keyup', (e) => (keys[e.key] = false));
-canvas.addEventListener('touchstart', (e) => {
+
+// Handle mobile buttons
+let leftPressed = false, rightPressed = false;
+leftButton.addEventListener('mousedown', () => (leftPressed = true));
+leftButton.addEventListener('mouseup', () => (leftPressed = false));
+rightButton.addEventListener('mousedown', () => (rightPressed = true));
+rightButton.addEventListener('mouseup', () => (rightPressed = false));
+shootButton.addEventListener('click', () => {
   player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: 'red', speed: 5 });
 });
 
 // Main game functions
 function update() {
-  if (keys['ArrowLeft'] && player.x > 0) player.x -= player.speed;
-  if (keys['ArrowRight'] && player.x < canvas.width - player.width) player.x += player.speed;
-  if (keys[' '] || keys['Space']) {
-    if (!player.shooting) {
-      player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: 'red', speed: 5 });
-      player.shooting = true;
-    }
-  } else {
-    player.shooting = false;
-  }
+  // Player movement
+  if ((keys['ArrowLeft'] || leftPressed) && player.x > 0) player.x -= player.speed;
+  if ((keys['ArrowRight'] || rightPressed) && player.x < canvas.width - player.width) player.x += player.speed;
 
   // Update bullets
   player.bullets.forEach((bullet, index) => {
@@ -106,17 +160,9 @@ function draw() {
 }
 
 function gameLoop() {
-  if (!gameRunning) return;
-
   update();
   draw();
-
   requestAnimationFrame(gameLoop);
 }
 
-// Start the game
-function startGame() {
-  gameLoop();
-}
-
-startGame();
+gameLoop();
