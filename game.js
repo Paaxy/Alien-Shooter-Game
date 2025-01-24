@@ -199,3 +199,22 @@ const gameLoop = () => {
 };
 
 gameLoop();
+// Handle keyboard input
+window.addEventListener('keydown', (e) => {
+  keys[e.key] = true;
+
+  // Shoot when the spacebar is pressed
+  if (e.key === ' ') {
+    player.bullets.push({
+      x: player.x + player.width / 2 - 5,
+      y: player.y,
+      width: 10,
+      height: 20,
+      color: 'red',
+      speed: 5,
+    });
+  }
+});
+window.addEventListener('keyup', (e) => {
+  keys[e.key] = false;
+});
