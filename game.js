@@ -95,13 +95,22 @@ function drawRect(obj) {
 window.addEventListener('keydown', (e) => (keys[e.key] = true));
 window.addEventListener('keyup', (e) => (keys[e.key] = false));
 
-// Handle mobile buttons
+// Handle mobile button presses
 let leftPressed = false, rightPressed = false;
 leftButton.addEventListener('mousedown', () => (leftPressed = true));
 leftButton.addEventListener('mouseup', () => (leftPressed = false));
 rightButton.addEventListener('mousedown', () => (rightPressed = true));
 rightButton.addEventListener('mouseup', () => (rightPressed = false));
 shootButton.addEventListener('click', () => {
+  player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: 'red', speed: 5 });
+});
+
+// Add touch event listeners for mobile compatibility
+leftButton.addEventListener('touchstart', () => (leftPressed = true));
+leftButton.addEventListener('touchend', () => (leftPressed = false));
+rightButton.addEventListener('touchstart', () => (rightPressed = true));
+rightButton.addEventListener('touchend', () => (rightPressed = false));
+shootButton.addEventListener('touchstart', () => {
   player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: 'red', speed: 5 });
 });
 
@@ -137,8 +146,8 @@ function update() {
     });
   });
 
-  // Spawn aliens
-  if (Math.random() < 0.02) createAlien();
+  // Spawn aliens with a chance of 5%
+  if (Math.random() < 0.05) createAlien();
 }
 
 function draw() {
