@@ -10,11 +10,8 @@
       overflow: hidden;
       background: black;
       position: relative;
-      user-select: none; /* Prevent text selection */
-      -webkit-user-select: none; /* Prevent text selection on mobile */
     }
 
-    /* Buttons */
     button {
       position: fixed;
       padding: 10px 20px;
@@ -23,9 +20,7 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      z-index: 1000; /* Keep on top of canvas */
-      user-select: none; /* Prevent highlighting */
-      touch-action: manipulation; /* Improve mobile responsiveness */
+      z-index: 1000; /* Ensure buttons are on top of the canvas */
     }
 
     #fullscreen {
@@ -48,133 +43,15 @@
       left: 10px;
     }
 
-    /* Canvas */
     canvas {
       display: block;
       background: black;
       position: absolute;
-      width: 100vw; /* Auto-resize */
-      height: 100vh; /* Auto-resize */
     }
   </style>
 </head>
 
 <body>
-  <script>
-    // Create canvas
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    document.body.appendChild(canvas);
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    // Buttons
-    const buttons = {
-      fullscreen: createButton('Fullscreen', 'fullscreen', toggleFullscreen),
-      left: createButton('←', 'left'),
-      right: createButton('→', 'right'),
-      shoot: createButton('Shoot', 'shoot'),
-    };
-
-    function createButton(text, id, handler) {
-      const btn = document.createElement('button');
-      btn.id = id;
-      btn.textContent = text;
-      if (handler) btn.addEventListener('click', handler);
-      document.body.appendChild(btn);
-      return btn;
-    }
-
-    // Fullscreen toggle
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        canvas.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
-    }
-
-    // Game Variables
-    const player = { x: canvas.width / 2, y: canvas.height - 60, width: 50, height: 50, color: 'blue', speed: 5, bullets: [] };
-    const aliens = [];
-    let keys = {}, score = 0;
-
-    // Event Listeners
-    window.addEventListener('keydown', (e) => (keys[e.key] = true));
-    window.addEventListener('keyup', (e) => (keys[e.key] = false));
-    let leftPressed = false, rightPressed = false;
-    buttons.left.addEventListener('touchstart', () => (leftPressed = true));
-    buttons.left.addEventListener('touchend', () => (leftPressed = false));
-    buttons.right.addEventListener('touchstart', () => (rightPressed = true));
-    buttons.right.addEventListener('touchend', () => (rightPressed = false));
-    buttons.shoot.addEventListener('click', () => {
-      player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: 'red', speed: 7 });
-    });
-
-    // Game Functions
-    function createAlien() {
-      aliens.push({
-        x: Math.random() * (canvas.width - 50),
-        y: -50,
-        width: 50,
-        height: 50,
-        color: 'green',
-        speed: Math.random() * 2 + 1,
-      });
-    }
-
-    function update() {
-      // Player movement
-      if ((keys['ArrowLeft'] || leftPressed) && player.x > 0) player.x -= player.speed;
-      if ((keys['ArrowRight'] || rightPressed) && player.x < canvas.width - player.width) player.x += player.speed;
-
-      // Bullets
-      player.bullets = player.bullets.filter((b) => (b.y -= b.speed) > 0);
-
-      // Aliens
-      aliens.forEach((alien, i) => {
-        alien.y += alien.speed;
-        if (alien.y > canvas.height) aliens.splice(i, 1);
-
-        // Collision with bullets
-        player.bullets = player.bullets.filter((bullet, j) => {
-          const hit =
-            bullet.x < alien.x + alien.width &&
-            bullet.x + bullet.width > alien.x &&
-            bullet.y < alien.y + alien.height &&
-            bullet.y + bullet.height > alien.y;
-          if (hit) {
-            aliens.splice(i, 1);
-            score++;
-          }
-          return !hit;
-        });
-      });
-
-      if (Math.random() < 0.02) createAlien();
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = player.color;
-      ctx.fillRect(player.x, player.y, player.width, player.height);
-      player.bullets.forEach((b) => ctx.fillRect(b.x, b.y, b.width, b.height));
-      aliens.forEach((a) => ctx.fillRect(a.x, a.y, a.width, a.height));
-      ctx.fillStyle = 'white';
-      ctx.fillText(`Score: ${score}`, 10, 20);
-    }
-
-    function gameLoop() {
-      update();
-      draw();
-      requestAnimationFrame(gameLoop);
-    }
-    gameLoop();
-  </script>
+  <script src="game.js"></script>
 </body>
 </html>
