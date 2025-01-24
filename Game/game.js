@@ -1,8 +1,6 @@
 // Create the canvas for the game
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
-canvas.width = 800;
-canvas.height = 600;
 document.body.appendChild(canvas);
 
 // Fullscreen functionality
@@ -23,13 +21,7 @@ fullscreenButton.textContent = 'Fullscreen';
 document.body.appendChild(fullscreenButton);
 fullscreenButton.addEventListener('click', toggleFullscreen);
 
-// Create shoot button
-const shootButton = document.createElement('button');
-shootButton.id = 'shoot';
-shootButton.textContent = 'Shoot';
-document.body.appendChild(shootButton);
-
-// Create mobile movement buttons (left and right)
+// Create movement buttons
 const leftButton = document.createElement('button');
 leftButton.id = 'left';
 leftButton.textContent = '←';
@@ -40,10 +32,14 @@ rightButton.id = 'right';
 rightButton.textContent = '→';
 document.body.appendChild(rightButton);
 
-// Ensure buttons are visible in fullscreen mode
+const shootButton = document.createElement('button');
+shootButton.id = 'shoot';
+shootButton.textContent = 'Shoot';
+document.body.appendChild(shootButton);
+
+// Ensure buttons stay visible and in the correct position in fullscreen mode
 const positionButtons = () => {
   const scale = window.innerWidth / canvas.width;
-
   fullscreenButton.style.transform = `scale(${scale})`;
   fullscreenButton.style.right = `${10 * scale}px`;
   fullscreenButton.style.bottom = `${10 * scale}px`;
