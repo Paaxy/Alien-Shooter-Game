@@ -1,156 +1,74 @@
-* {
+body {
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body, html {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #111;
   overflow: hidden;
+  background-color: black;
+  color: white;
 }
 
 #game-container {
   position: relative;
   width: 100%;
   height: 100%;
+  text-align: center;
 }
 
-#gameCanvas {
-  background-color: #000;
+canvas {
   display: block;
+  margin: 0 auto;
+  background: #000;
+}
+
+#livesBar {
   position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .controls {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 10;
-}
-
-.mobile-controls {
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  z-index: 10;
+  gap: 10px;
 }
 
 button {
-  background-color: #444;
+  font-size: 16px;
+  padding: 10px 20px;
+  background-color: #222;
   color: white;
-  border: none;
-  padding: 10px;
-  margin: 5px;
-  cursor: pointer;
-  font-size: 14px;
+  border: 1px solid white;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 button:hover {
-  background-color: #666;
+  background-color: #444;
 }
 
-#fullscreenBtn {
+.mobile-controls {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #008CBA;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(3, 60px);
+  grid-template-rows: 60px 60px;
+  gap: 10px;
 }
 
-#fullscreenBtn:hover {
-  background-color: #005f73;
-}
-
-/* Mobile controls styling */
 .mobile-controls button {
-  width: 80px;
-  height: 80px;
-  font-size: 18px;
-  margin: 10px;
-}
-
-/* Custom styles for mobile button layout */
-#up {
-  background-color: #4CAF50;
-}
-
-#down {
-  background-color: #f44336;
-}
-
-#left {
-  background-color: #ff9800;
-}
-
-#right {
-  background-color: #2196F3;
+  width: 60px;
+  height: 60px;
+  font-size: 20px;
+  padding: 0;
 }
 
 #shootBtn {
-  background-color: #9C27B0;
-  width: 100px;
-  height: 100px;
-}
-
-/* Ensures buttons are responsive on different screen sizes */
-@media (max-width: 768px) {
-  .mobile-controls {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-  }
-
-  #shootBtn {
-    width: 120px;
-    height: 120px;
-  }
-}
-
-/* Basic font styling */
-body {
-  font-family: Arial, sans-serif;
-}
-
-button, #fullscreenBtn {
-  font-family: 'Roboto', sans-serif;
-}
-
-/* Optional: Add some transition effects to buttons */
-button, #fullscreenBtn {
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:active, #fullscreenBtn:active {
-  transform: scale(0.95);
-}
-
-/* Positioning the lives bar at the top center */
-#livesBar {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 20px;
-  color: white;
-  z-index: 10;
-}
-
-/* Pause Button Styling */
-#pauseBtn {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: #ff9800;
-  z-index: 10;
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
 }
