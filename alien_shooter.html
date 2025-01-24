@@ -148,8 +148,13 @@
     let leftPressed = false, rightPressed = false;
     leftButton.addEventListener('mousedown', () => (leftPressed = true));
     leftButton.addEventListener('mouseup', () => (leftPressed = false));
+    leftButton.addEventListener('touchstart', () => (leftPressed = true));
+    leftButton.addEventListener('touchend', () => (leftPressed = false));
+
     rightButton.addEventListener('mousedown', () => (rightPressed = true));
     rightButton.addEventListener('mouseup', () => (rightPressed = false));
+    rightButton.addEventListener('touchstart', () => (rightPressed = true));
+    rightButton.addEventListener('touchend', () => (rightPressed = false));
 
     shootButton.addEventListener('click', () => {
       player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: 'red', speed: 5 });
