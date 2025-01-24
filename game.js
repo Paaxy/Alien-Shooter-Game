@@ -42,7 +42,6 @@ function createAliens() {
         width: 50,
         height: 50,
         speed: 2 + Math.random() * 2,
-        shootCooldown: Math.random() * 2000 + 1000, // Random shoot cooldown
       };
       aliens.push(alien);
     }
