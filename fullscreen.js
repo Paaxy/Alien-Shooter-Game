@@ -9,16 +9,16 @@ const toggleFullscreen = () => {
   }
 };
 
-// Event listeners for fullscreen toggle
+// Event listener for fullscreen toggle (computers)
 window.addEventListener('keydown', (e) => {
   if (e.key === 'f' || e.key === 'F') { // Press 'F' to toggle fullscreen
     toggleFullscreen();
   }
 });
 
-canvas.addEventListener('dblclick', toggleFullscreen); // Double-click canvas to toggle fullscreen
+// Remove double-click for mobile (no double-tap functionality)
 
-// Create fullscreen button for mobile
+// Create fullscreen button for all devices
 const fullscreenButton = document.createElement('button');
 fullscreenButton.textContent = 'Fullscreen';
 fullscreenButton.style.position = 'absolute';
@@ -30,6 +30,7 @@ fullscreenButton.style.color = '#fff';
 fullscreenButton.style.border = 'none';
 fullscreenButton.style.borderRadius = '5px';
 fullscreenButton.style.cursor = 'pointer';
+fullscreenButton.style.zIndex = '1000';
 document.body.appendChild(fullscreenButton);
 
 // Add fullscreen toggle to button
