@@ -112,6 +112,20 @@ function checkBulletCollision() {
   }
 }
 
+// Shooting functionality
+function shoot() {
+  if (shooting && bullets.length < 3) {  // Limit to 3 bullets on screen at once
+    const bullet = { 
+      x: player.x + player.width / 2 - 2.5,  // Center bullet with player
+      y: player.y - 10, 
+      width: 5, 
+      height: 15, 
+      speed: 10
+    };
+    bullets.push(bullet);
+  }
+}
+
 // Draw everything
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -139,9 +153,7 @@ function draw() {
   });
 
   // Draw player lives
-  ctx.fillStyle = 'white';
-  ctx.font = '20px Arial';
-  ctx.fillText(`Lives: ${player.lives}`, 20, 30);
+  document.getElementById('livesBar').textContent = `Lives: ${player.lives}`;
 }
 
 // Main game loop
@@ -150,6 +162,7 @@ function gameLoop() {
   moveBullets();
   moveAliens();
   shootAliens();
+  shoot();  // Call shoot to ensure the player can shoot
   checkBulletCollision();
   draw();
   requestAnimationFrame(gameLoop);
