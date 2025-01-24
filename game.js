@@ -10,6 +10,7 @@ const aliens = [];
 let shooting = false;
 let keys = { up: false, down: false, left: false, right: false };
 let isPaused = false;
+let score = 0; // Add score variable
 
 // Player movement
 function movePlayer() {
@@ -96,6 +97,7 @@ function checkCollision() {
       ) {
         aliens.splice(aIndex, 1);
         bullets.splice(bIndex, 1);
+        score += 10; // Add points for each alien hit
       }
     });
   });
@@ -145,6 +147,11 @@ function draw() {
 
   // Update lives
   document.getElementById('livesBar').textContent = `Lives: ${player.lives}`;
+  
+  // Display score
+  ctx.font = '20px Arial';
+  ctx.fillStyle = 'white';
+  ctx.fillText(`Score: ${score}`, 20, 30);
 }
 
 // Fullscreen functionality
