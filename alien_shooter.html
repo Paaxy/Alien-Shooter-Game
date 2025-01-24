@@ -88,7 +88,7 @@
     shootButton.textContent = 'Shoot';
     document.body.appendChild(shootButton);
 
-    // Ensure buttons are visible in fullscreen mode
+    // Function to position buttons correctly
     const positionButtons = () => {
       const scale = window.innerWidth / canvas.width;
       const offsetX = (window.innerWidth - canvas.width * scale) / 2;
