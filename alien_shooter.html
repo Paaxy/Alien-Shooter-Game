@@ -9,11 +9,10 @@
       margin: 0;
       overflow: hidden;
       background: black;
+      position: relative;
     }
     button {
       position: absolute;
-      bottom: 10px;
-      right: 10px;
       padding: 10px 20px;
       background: #333;
       color: #fff;
@@ -21,6 +20,22 @@
       border-radius: 5px;
       cursor: pointer;
       z-index: 1000;
+    }
+    #fullscreen {
+      bottom: 10px;
+      right: 10px;
+    }
+    #left {
+      bottom: 80px;
+      left: 10px;
+    }
+    #right {
+      bottom: 80px;
+      left: 100px;
+    }
+    #shoot {
+      bottom: 10px;
+      left: 10px;
     }
   </style>
 </head>
@@ -46,36 +61,119 @@
 
     // Create fullscreen button
     const fullscreenButton = document.createElement('button');
+    fullscreenButton.id = 'fullscreen';
     fullscreenButton.textContent = 'Fullscreen';
     document.body.appendChild(fullscreenButton);
-
-    // Add fullscreen toggle to button
     fullscreenButton.addEventListener('click', toggleFullscreen);
 
-    // Keyboard support for fullscreen (desktop only)
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'f' || e.key === 'F') {
-        toggleFullscreen();
-      }
-    });
+    // Create movement buttons
+    const leftButton = document.createElement('button');
+    leftButton.id = 'left';
+    leftButton.textContent = '←';
+    document.body.appendChild(leftButton);
 
-    // Example Game Setup (You can replace this with your actual game logic)
-    let player = { x: 400, y: 500, width: 50, height: 50, color: 'blue', speed: 5 };
+    const rightButton = document.createElement('button');
+    rightButton.id = 'right';
+    rightButton.textContent = '→';
+    document.body.appendChild(rightButton);
+
+    const shootButton = document.createElement('button');
+    shootButton.id = 'shoot';
+    shootButton.textContent = 'Shoot';
+    document.body.appendChild(shootButton);
+
+    // Game Variables
+    const player = { x: 375, y: 500, width: 50, height: 50, color: 'blue', speed: 5, bullets: [] };
+    const aliens = [];
     const keys = {};
+    let score = 0;
+
+    // Utility functions
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function createAlien() {
+      aliens.push({
+        x: random(0, canvas.width - 50),
+        y: -50,
+        width: 50,
+        height: 50,
+        color: 'green',
+        speed: random(1, 3),
+      });
+    }
+
+    function drawRect(obj) {
+      ctx.fillStyle = obj.color;
+      ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+    }
 
     // Handle keyboard input
     window.addEventListener('keydown', (e) => (keys[e.key] = true));
     window.addEventListener('keyup', (e) => (keys[e.key] = false));
 
+    // Handle mobile buttons
+    leftButton.addEventListener('mousedown', () => (keys['ArrowLeft'] = true));
+    leftButton.addEventListener('mouseup', () => (keys['ArrowLeft'] = false));
+    rightButton.addEventListener('mousedown', () => (keys['ArrowRight'] = true));
+    rightButton.addEventListener('mouseup', () => (keys['ArrowRight'] = false));
+    shootButton.addEventListener('click', () => {
+      player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: 'red', speed: 5 });
+    });
+
+    // Main game functions
     function update() {
+      // Player movement
       if (keys['ArrowLeft'] && player.x > 0) player.x -= player.speed;
       if (keys['ArrowRight'] && player.x < canvas.width - player.width) player.x += player.speed;
+
+      // Update bullets
+      player.bullets.forEach((bullet, index) => {
+        bullet.y -= bullet.speed;
+        if (bullet.y + bullet.height < 0) player.bullets.splice(index, 1);
+      });
+
+      // Update aliens
+      aliens.forEach((alien, index) => {
+        alien.y += alien.speed;
+        if (alien.y > canvas.height) aliens.splice(index, 1);
+
+        // Check collision with bullets
+        player.bullets.forEach((bullet, bIndex) => {
+          if (
+            bullet.x < alien.x + alien.width &&
+            bullet.x + bullet.width > alien.x &&
+            bullet.y < alien.y + alien.height &&
+            bullet.y + bullet.height > alien.y
+          ) {
+            aliens.splice(index, 1);
+            player.bullets.splice(bIndex, 1);
+            score++;
+          }
+        });
+      });
+
+      // Spawn aliens
+      if (Math.random() < 0.02) createAlien();
     }
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = player.color;
-      ctx.fillRect(player.x, player.y, player.width, player.height);
+
+      // Draw player
+      drawRect(player);
+
+      // Draw bullets
+      player.bullets.forEach((bullet) => drawRect(bullet));
+
+      // Draw aliens
+      aliens.forEach((alien) => drawRect(alien));
+
+      // Draw score
+      ctx.fillStyle = 'white';
+      ctx.font = '20px Arial';
+      ctx.fillText(`Score: ${score}`, 10, 20);
     }
 
     function gameLoop() {
