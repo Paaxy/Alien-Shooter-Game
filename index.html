@@ -37,6 +37,7 @@
         #controls {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
         }
 
         button {
@@ -74,6 +75,7 @@
         <button id="right">Right</button>
         <button id="shootBtn">Shoot</button>
         <button id="pauseBtn">Pause</button>
+        <button id="fullscreenBtn">Fullscreen</button>
     </div>
     <script>
         // Game variables
@@ -146,6 +148,7 @@
                 right: document.getElementById('right'),
                 shoot: document.getElementById('shootBtn'),
                 pause: document.getElementById('pauseBtn'),
+                fullscreen: document.getElementById('fullscreenBtn'),
             };
 
             Object.entries(mobileButtons).forEach(([key, button]) => {
@@ -155,6 +158,8 @@
                         shooting = true;
                     } else if (key === 'pause') {
                         togglePause();
+                    } else if (key === 'fullscreen') {
+                        toggleFullscreen();
                     } else {
                         keys[key] = true;
                     }
@@ -193,7 +198,7 @@
         // Update bullets
         function updateBullets() {
             bullets.forEach((bullet, index) => {
-                bullet.y -= bullet.speed; // Bullets move upwards
+                bullet.y -= bullet.speed; // Player bullets move upwards
                 // Remove bullet if it goes off-screen
                 if (bullet.y < 0) {
                     bullets.splice(index, 1);
@@ -219,7 +224,7 @@
             });
         }
 
-        // Fire alien bullets
+        // Fire alien bullets (downwards)
         function fireAlienBullet(alien) {
             // Create bullet object
             const bullet = {
@@ -250,6 +255,17 @@
                 ctx.fillStyle = 'white';
                 ctx.font = '40px Arial';
                 ctx.fillText('Paused', canvas.width / 2 - 80, canvas.height / 2);
+            }
+        }
+
+        // Toggle fullscreen
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                canvas.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
             }
         }
 
