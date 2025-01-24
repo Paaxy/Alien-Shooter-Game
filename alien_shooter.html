@@ -20,7 +20,7 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      z-index: 1000; /* Ensure buttons are on top of the canvas */
+      z-index: 1000;
     }
 
     #fullscreen {
@@ -52,6 +52,13 @@
 </head>
 
 <body>
+  <button id="fullscreen">Fullscreen</button>
+  <button id="left">Left</button>
+  <button id="right">Right</button>
+  <button id="shoot">Shoot</button>
+
+  <canvas id="gameCanvas"></canvas>
+
   <script src="game.js"></script>
 </body>
 </html>
