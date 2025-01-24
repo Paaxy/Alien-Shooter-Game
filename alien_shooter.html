@@ -12,7 +12,7 @@
       position: relative;
     }
 
-    /* Buttons should stay on top in fullscreen */
+    /* Ensure buttons stay fixed in fullscreen mode */
     button {
       position: fixed;
       padding: 10px 20px;
@@ -21,7 +21,7 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      z-index: 1000;
+      z-index: 1000; /* Keep on top of canvas */
     }
 
     #fullscreen {
@@ -44,7 +44,7 @@
       left: 10px;
     }
 
-    /* Ensures canvas takes full screen when fullscreen */
+    /* Canvas should take full screen when fullscreen mode is activated */
     canvas {
       display: block;
       background: black;
