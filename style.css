@@ -29,6 +29,7 @@ body {
 #controls {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
 }
 
 button {
