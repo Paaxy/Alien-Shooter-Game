@@ -33,6 +33,7 @@ body, html {
 .mobile-controls {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 button {
@@ -42,6 +43,8 @@ button {
   padding: 10px;
   margin: 5px;
   cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
 }
 
 button:hover {
@@ -52,4 +55,72 @@ button:hover {
   position: absolute;
   top: 10px;
   right: 10px;
+  background-color: #008CBA;
+}
+
+#fullscreenBtn:hover {
+  background-color: #005f73;
+}
+
+/* Mobile controls styling */
+.mobile-controls button {
+  width: 80px;
+  height: 80px;
+  font-size: 18px;
+  margin: 10px;
+}
+
+/* Custom styles for mobile button layout */
+#up {
+  background-color: #4CAF50;
+}
+
+#down {
+  background-color: #f44336;
+}
+
+#left {
+  background-color: #ff9800;
+}
+
+#right {
+  background-color: #2196F3;
+}
+
+#shootBtn {
+  background-color: #9C27B0;
+  width: 100px;
+  height: 100px;
+}
+
+/* Ensures buttons are responsive on different screen sizes */
+@media (max-width: 768px) {
+  .mobile-controls {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+  }
+
+  #shootBtn {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* Basic font styling */
+body {
+  font-family: Arial, sans-serif;
+}
+
+button, #fullscreenBtn {
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Optional: Add some transition effects to buttons */
+button, #fullscreenBtn {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:active, #fullscreenBtn:active {
+  transform: scale(0.95);
 }
