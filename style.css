@@ -124,3 +124,14 @@ button, #fullscreenBtn {
 button:active, #fullscreenBtn:active {
   transform: scale(0.95);
 }
+
+/* Positioning the lives bar at the top center */
+#livesBar {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 20px;
+  color: white;
+  z-index: 10;
+}
