@@ -23,7 +23,13 @@ fullscreenButton.textContent = 'Fullscreen';
 document.body.appendChild(fullscreenButton);
 fullscreenButton.addEventListener('click', toggleFullscreen);
 
-// Create movement buttons
+// Create shoot button
+const shootButton = document.createElement('button');
+shootButton.id = 'shoot';
+shootButton.textContent = 'Shoot';
+document.body.appendChild(shootButton);
+
+// Create mobile movement buttons (left and right)
 const leftButton = document.createElement('button');
 leftButton.id = 'left';
 leftButton.textContent = '←';
@@ -33,11 +39,6 @@ const rightButton = document.createElement('button');
 rightButton.id = 'right';
 rightButton.textContent = '→';
 document.body.appendChild(rightButton);
-
-const shootButton = document.createElement('button');
-shootButton.id = 'shoot';
-shootButton.textContent = 'Shoot';
-document.body.appendChild(shootButton);
 
 // Ensure buttons are visible in fullscreen mode
 const positionButtons = () => {
