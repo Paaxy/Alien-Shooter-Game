@@ -150,6 +150,7 @@
     leftButton.addEventListener('mouseup', () => (leftPressed = false));
     rightButton.addEventListener('mousedown', () => (rightPressed = true));
     rightButton.addEventListener('mouseup', () => (rightPressed = false));
+
     shootButton.addEventListener('click', () => {
       player.bullets.push({ x: player.x + player.width / 2 - 5, y: player.y, width: 10, height: 20, color: 'red', speed: 5 });
     });
@@ -216,7 +217,5 @@
 
     gameLoop();
   </script>
-
-  <script src="game.js"></script>
 </body>
 </html>
